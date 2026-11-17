@@ -1,0 +1,24 @@
+{
+  "name": "tidebound-survival",
+  "productName": "Lantern Sea",
+  "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "description": "Lantern Sea - an open-world ocean survival and raft-building game for the browser (Three.js / WebGL2).",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "fetch-assets": "node scripts/fetch-assets.mjs",
+    "verify-assets": "node scripts/verify-assets.mjs",
+    "sounds": "python tools/sounds.py"
+  },
+  "dependencies": {
+    "peerjs": "^1.5.4",
+    "simplex-noise": "4.0.3",
+    "three": "0.160.0"
+  },
+  "devDependencies": {
+    "vite": "5.4.11"
+  }
+}

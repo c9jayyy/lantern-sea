@@ -1,0 +1,37 @@
+// Entry point. Module imports run in order, so this reproduces the original script order exactly.
+import './style.css';
+import './three-global.js';
+import './core/core.js';
+import './core/assets.js';
+import './core/textures.js';
+import './world/sky.js';
+import './ocean/ocean.js';
+import './core/render.js';
+import './core/models.js';
+import './world/data.js';
+import './world/world.js';
+import './world/groundcover.js';
+import './world/data_more.js';
+import './world/data_extra.js';
+import './world/sites.js';
+import './gameplay/structures.js';
+import './gameplay/buildables.js';
+import './gameplay/player.js';
+import './gameplay/systems.js';
+import './gameplay/actions.js';
+import './gameplay/build.js';
+import './gameplay/sea.js';
+import './gameplay/creatures.js';
+import './gameplay/wildlife.js';
+import './gameplay/story.js';
+import './gameplay/quests.js';
+import './core/sounds.js';
+import './core/audio.js';
+import './ui/ui.js';
+import './ui/ui_panels.js';
+import './ui/icons.js';
+import './net/net.js';
+import './core/game.js';
+
+const start = () => { try { window.G.game.boot(); } catch (e) { window.G.game.fatal(e); } };
+if (document.readyState === 'loading') window.addEventListener('DOMContentLoaded', start); else start();
