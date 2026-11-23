@@ -5,7 +5,14 @@ This is the third version: the project moved to a Vite + Three.js layout with re
 PBR textures and glTF models), recorded sound effects, a rebuilt underwater renderer, and rebuilt animals.
 Environment: Chromium 156 embedded browser, WebGL2, AMD Radeon RX 6600 (ANGLE / Direct3D 11).
 
-**Latest self-test: 70 of 70 passed, 0 console errors** (dev build, 16 November 2026, after the interface round: rendered
+**Latest self-test: 70 of 70 passed, 0 console errors** (dev build, 22 November 2026, after the graphics review round:
+rebuilt first-person fist and fingernails, laid hemp rope, natural fish under the surface, sargassum wrack line and
+driftwood, clustered reef with smoother corals and winding brain coral, life-size tree leaves, no town glow on the night
+horizon, and sea-floor tiling that cut a dive from 29 to about 4 million triangles; `npm run build` succeeds). An earlier
+run that day failed the drowning/air-tank check once and it passed when repeated on its own; that check now prints the
+player's state if it fails again.
+
+Previous: 70 of 70 (dev build, 16 November 2026, after the interface round: rendered
 item icons, new HUD, crafting/inventory/construction screens, 96 more items, cloud shadows, gulls, raft wake). The UI and
 HUD checks were updated for the new markup and now also confirm the inventory detail pane fills and the hotbar shows
 rendered icons. `npm run build` succeeds; the full suite was not re-run on the production bundle.

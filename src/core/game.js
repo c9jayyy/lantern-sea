@@ -150,7 +150,7 @@
         cam.lookAt(rx + 14, 2.4, rz - 9); cam.updateMatrixWorld();
       }
       G.items.animate(G.uni.uTime.value, dt); G.fx.update(dt); G.chips.update(dt); if (G.net) G.net.update(dt); G.sites.update(G.uni.uTime.value); G.lightPool.update(G.uni.uTime.value);
-      const focus = st === 'menu' ? cam.position : P.pos; G.sky.update(G.time.hour, dt, cam, focus); G.ocean.update(dt, cam); G.groundCover.update(cam.position); G.render.frame(dt); G.ui.updateHUD(dt); G.audio.update(dt);
+      const focus = st === 'menu' ? cam.position : P.pos; G.sky.update(G.time.hour, dt, cam, focus); G.ocean.update(dt, cam); G.groundCover.update(cam.position); G.world.cullDeco(cam.position); G.render.frame(dt); G.ui.updateHUD(dt); G.audio.update(dt);
     }
   };
   window.addEventListener('error', (e) => { if (G.ui && G.ui.root && G.state === 'play' && !window._errShown) { window._errShown = true; G.ui.toast('Script error: ' + e.message, 'bad'); } });

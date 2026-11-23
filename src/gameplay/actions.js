@@ -123,25 +123,47 @@
     const g = G.geo.cyl(r1, r0, L, 14); _tm.compose(_tb.set((a[0] + c[0]) / 2, (a[1] + c[1]) / 2, (a[2] + c[2]) / 2), _tq, new THREE.Vector3(1, 1, 1)); b.add(g, mat, _tm);
   }
   // the right forearm and hand, closed around a handle that runs along local Y through the origin
-  function arm(b) {
-    const R = 0.031, ring = (a, y, r) => [Math.cos(a) * r, y, -Math.sin(a) * r];
-    // fingers: three phalanges each, wrapping from the palm side (+x) round the front of the handle
-    for (let i = 0; i < 4; i++) {
-      const y = 0.032 - i * 0.022, fr = 0.0098 - i * 0.0009, angs = [0.15, -1.05, -2.15, -2.9], rad = R + fr;
-      for (let k = 0; k < 3; k++) { const p0 = ring(angs[k], y, rad), p1 = ring(angs[k + 1], y - 0.002 * k, rad); b.beam(p0[0], p0[1], p0[2], p1[0], p1[1], p1[2], fr * (1 - k * 0.12), 'skin', 8); b.sph(fr * (1.02 - k * 0.12), p1[0], p1[1], p1[2], 'skin', 1, 1, 1, null, 8); }
-      const p0 = ring(angs[0], y, rad); b.sph(fr * 1.15, p0[0], p0[1], p0[2], 'skin', 1, 1, 1, null, 8);
-    }
-    // thumb: from the base of the palm, over the top of the fingers, round the back of the handle
-    const t0 = [0.05, 0.055, 0.028], t1 = ring(1.1, 0.062, R + 0.011), t2 = ring(1.95, 0.058, R + 0.01);
-    b.beam(t0[0], t0[1], t0[2], t1[0], t1[1], t1[2], 0.012, 'skin', 8); b.sph(0.012, t1[0], t1[1], t1[2], 'skin', 1, 1, 1, null, 8); b.beam(t1[0], t1[1], t1[2], t2[0], t2[1], t2[2], 0.0105, 'skin', 8); b.sph(0.0105, t2[0], t2[1], t2[2], 'skin', 1, 1, 1, null, 8);
-    // palm, back of the hand and the knuckle ridge
-    b.sph(1, 0.06, -0.004, 0.006, 'skin', 0.036, 0.064, 0.046, null, 16);
-    for (let i = 0; i < 4; i++) b.sph(0.0125, 0.05, 0.032 - i * 0.022, 0.03, 'skin', 1, 1, 1, null, 8);
-    // wrist and a tapering, muscular forearm; a rolled shirt sleeve beyond, out of view
-    taper(b, [0.068, -0.052, 0.012], [0.17, -0.17, 0.13], 0.033, 0.041, 'skin');
-    taper(b, [0.17, -0.17, 0.13], [0.34, -0.37, 0.36], 0.041, 0.05, 'skin'); b.sph(0.04, 0.17, -0.17, 0.13, 'skin', 1, 1, 1, null, 12);
-    taper(b, [0.29, -0.31, 0.29], [0.44, -0.48, 0.48], 0.06, 0.064, 'sleeve'); b.cyl(0.068, 0.066, 0.06, 0.29, -0.31, 0.29, 'sleeve', 16, 0.75, 0, -0.62);
+  // a fingernail lying on the outside of a fingertip: centre p, outward direction n, along-finger direction t
+  const _nq = new THREE.Quaternion(), _nm = new THREE.Matrix4(), _nb = new THREE.Matrix4(), _nx = new THREE.Vector3(), _ny = new THREE.Vector3(), _nz = new THREE.Vector3();
+  function nail(b, p, n, t, w) {
+    _nz.set(n[0], n[1], n[2]).normalize(); _ny.set(t[0], t[1], t[2]).normalize(); _nx.crossVectors(_ny, _nz).normalize(); _ny.crossVectors(_nz, _nx);
+    _nb.makeBasis(_nx, _ny, _nz); _nq.setFromRotationMatrix(_nb);
+    _nm.compose(_tb.set(p[0], p[1], p[2]), _nq, new THREE.Vector3(w * 0.74, w * 0.95, w * 0.26)); b.add(G.geo.sph(10), 'nail', _nm);
   }
+  // the right forearm and hand, closed around a handle of radius R that runs along local Y through the origin.
+  // Fingers touch their neighbours, each phalanx tapers and is as long as a real one, so a thin handle makes a tight fist.
+  function arm(b, R) {
+    R = R || 0.02; const dx = R - 0.031, ring = (a, y, r) => [Math.cos(a) * r, y, -Math.sin(a) * r];
+    const LEN = [[0.044, 0.027, 0.02], [0.048, 0.03, 0.021], [0.045, 0.029, 0.02], [0.036, 0.022, 0.018]];   // index, middle, ring, little
+    for (let i = 0; i < 4; i++) {
+      const fr = [0.0106, 0.0108, 0.0101, 0.0088][i], y = 0.033 - [0, 0.0212, 0.0418, 0.0608][i], rad = R + fr * 0.92;
+      const angs = [0.2]; for (let k = 0; k < 3; k++) angs.push(angs[k] - 2 * Math.asin(Math.min(0.98, LEN[i][k] / (2 * rad))));
+      const pts = angs.map((a, k) => ring(Math.max(a, -3.55), y - 0.0015 * k, rad - k * 0.0006));
+      for (let k = 0; k < 3; k++) {
+        const r0 = fr * (1 - k * 0.1), r1 = fr * (0.9 - k * 0.1);
+        taper(b, pts[k], pts[k + 1], r0, r1, 'skin'); b.sph(r1 * 1.04, pts[k + 1][0], pts[k + 1][1], pts[k + 1][2], 'skin', 1, 1, 1, null, 10);
+      }
+      b.sph(fr * 1.18, pts[0][0], pts[0][1], pts[0][2], 'skin', 1, 1.0, 1.05, null, 10);   // knuckle
+      // nail on the last joint, facing away from the handle
+      const a3 = (angs[2] + angs[3]) / 2 - 0.08, pn = ring(a3, y - 0.004, rad + fr * 0.62), tn = [-Math.sin(a3), 0, -Math.cos(a3)];
+      nail(b, pn, [Math.cos(a3), 0, -Math.sin(a3)], [tn[0], tn[1], tn[2]], fr * 0.85);
+    }
+    // thumb: from the ball of the thumb, over the index finger, its tip pressing round the back of the handle
+    const rt = R + 0.0115, t0 = [0.052 + dx, 0.05, 0.03], t1 = ring(1.05, 0.058, rt), t2 = ring(1.75, 0.054, rt - 0.001);
+    taper(b, t0, t1, 0.0135, 0.0122, 'skin'); b.sph(0.0124, t1[0], t1[1], t1[2], 'skin', 1, 1, 1, null, 10);
+    taper(b, t1, t2, 0.0122, 0.0104, 'skin'); b.sph(0.0106, t2[0], t2[1], t2[2], 'skin', 1, 1, 1, null, 10);
+    const at = 1.62; nail(b, ring(at, 0.06, rt + 0.0075), [Math.cos(at) * 0.6, 0.8, -Math.sin(at) * 0.6], [-Math.sin(at), 0, -Math.cos(at)], 0.0095);
+    // palm and thenar pad, back of the hand with its knuckle ridge
+    b.sph(1, 0.058 + dx, -0.006, 0.006, 'skin', 0.034, 0.062, 0.043, null, 18);
+    b.sph(1, 0.05 + dx, 0.03, 0.028, 'skin', 0.022, 0.03, 0.02, null, 12);
+    for (let i = 0; i < 4; i++) b.sph(0.0118, 0.049 + dx, 0.033 - i * 0.0205, 0.028, 'skin', 1, 1, 1, null, 10);
+    // wrist and a tapering, muscular forearm; a rolled shirt sleeve beyond, out of view
+    taper(b, [0.066 + dx, -0.05, 0.012], [0.17 + dx, -0.17, 0.13], 0.031, 0.04, 'skin');
+    taper(b, [0.17 + dx, -0.17, 0.13], [0.34 + dx, -0.37, 0.36], 0.04, 0.049, 'skin'); b.sph(0.0395, 0.17 + dx, -0.17, 0.13, 'skin', 1, 1, 1, null, 14);
+    taper(b, [0.29 + dx, -0.31, 0.29], [0.44 + dx, -0.48, 0.48], 0.06, 0.064, 'sleeve'); b.cyl(0.068, 0.066, 0.06, 0.29 + dx, -0.31, 0.29, 'sleeve', 16, 0.75, 0, -0.62);
+  }
+  // radius of the handle where each tool is held (the fist closes to it)
+  const HANDLE_R = { axe: 0.02, pick: 0.02, knife: 0.018, spear: 0.016, hook: 0.019, mallet: 0.019, rod: 0.013, paddle: 0.019, torch: 0.019, shovel: 0.018, detector: 0.017, sonar: 0.03, bow: 0.017, binoculars: 0.03 };
   // a knapped stone head lashed to a crooked stick: handle length L, head size [w, h, d], head offset sideways
   function stoneHead(b, L, sz, off) {
     b.cyl(0.017, 0.022, L, 0, 0, 0, 'log', 8, 0, 0, 0.04);
@@ -186,7 +208,7 @@
       // the hand closes on the handle; scanned tools sit on their base, so their grip height differs
       const scanned = def.tool.tier > 0 && G.assets.models[ty === 'axe' ? 'axe' : 'knife'] && (ty === 'axe' || ty === 'knife'), gy = scanned ? GRIP_SCAN[ty] : (GRIP[ty] != null ? GRIP[ty] : -0.1);
       // every tool is moved so its grip sits at the hand's origin, so the hand is always where the pose puts it
-      const fb = new G.MB(); fb.merge(b, fb.mat4(0, -gy, 0)); const ab = new G.MB(); arm(ab); fb.merge(ab, fb.mat4(0, 0, 0));
+      const fb = new G.MB(); fb.merge(b, fb.mat4(0, -gy, 0)); const ab = new G.MB(); arm(ab, HANDLE_R[ty]); fb.merge(ab, fb.mat4(0, 0, 0));
       this.hand = fb.build({ shadow: false }); const pose = POSE[ty] || POSE.def; this.hand.userData.pose = pose; this.hand.userData.ty = ty;
       this.hand.position.set(pose[0][0], pose[0][1], pose[0][2]); this.hand.rotation.set(pose[1][0], pose[1][1], pose[1][2]); this.handRoot.add(this.hand);
       if (ty === 'torch') {   // layered additive flame: wide orange body, yellow core, white-hot root; flickers every frame

@@ -129,7 +129,7 @@
       { fn: (u, d) => { let c = counter([0.32, 0.42, 0.55], [0.86, 0.86, 0.82], 0.62, d, u); const st = Math.exp(-Math.pow((d - 0.42) / 0.06, 2)); c = mixc(c, [0.95, 0.75, 0.12], st * G.sstep(0.15, 0.4, u)); return mixc(c, [0.95, 0.78, 0.2], G.sstep(0.82, 0.95, u) * 0.8); }, fin: finRays([0.9, 0.7, 0.2], [0.98, 0.82, 0.28]) },
       { fn: (u, d) => { const sc = vn(u * 30, d * 12) > 0.62 ? 0.55 : 1; let c = mixc([0.06, 0.2, 0.62], [0.12, 0.3, 0.7], d); c = c.map((x) => x * sc); return mixc(c, [0.95, 0.82, 0.12], G.sstep(0.85, 0.93, u)); }, fin: finRays([0.08, 0.15, 0.5], [0.04, 0.07, 0.2]) },
       { fn: (u, d) => { let c = counter([0.62, 0.66, 0.42], [0.86, 0.87, 0.8], 0.6, d, u); const bar = Math.sin((u - 0.18) * 31) > 0.55 && u > 0.18 && u < 0.84 && d < 0.85 ? 1 : 0; return mixc(c, [0.05, 0.06, 0.06], bar * 0.88); }, fin: finRays([0.6, 0.62, 0.5], [0.25, 0.28, 0.25]) },
-      { fn: (u, d) => { const c = counter([0.28, 0.36, 0.4], [0.82, 0.84, 0.84], 0.45, d, u, 0.2); const sh = 0.9 + 0.2 * vn(u * 60, d * 20); return c.map((x) => x * sh); }, fin: finRays([0.5, 0.55, 0.55], [0.75, 0.62, 0.2]) },
+      { fn: (u, d) => { const c = counter([0.17, 0.24, 0.28], [0.78, 0.8, 0.8], 0.45, d, u, 0.2); const sh = 0.9 + 0.2 * vn(u * 60, d * 20); return c.map((x) => x * sh); }, fin: finRays([0.5, 0.55, 0.55], [0.75, 0.62, 0.2]) },
       { fn: (u, d) => { const scl = 0.82 + 0.18 * Math.abs(Math.sin(u * 70) * Math.sin(d * 26)); let c = mixc([0.12, 0.55, 0.45], [0.3, 0.7, 0.6], d * 0.6); c = mixc(c, [0.85, 0.42, 0.5], (1 - scl) * 3); if (u < 0.12) c = mixc(c, [0.1, 0.45, 0.62], 0.6); return c.map((x) => x * (0.85 + 0.15 * scl)); }, fin: finRays([0.2, 0.5, 0.6], [0.85, 0.45, 0.5]) },
       { fn: (u, d) => { let c = mixc([0.9, 0.72, 0.18], [0.92, 0.82, 0.45], d); const s = Math.abs(Math.sin((d + u * 0.25) * 22)); return mixc(c, [0.1, 0.42, 0.75], G.sstep(0.82, 0.95, s) * (d < 0.8 ? 1 : 0)); }, fin: finRays([0.85, 0.75, 0.3], [0.9, 0.82, 0.45]) },      // 6 butterflyfish: pale front, bright yellow rear, black bar through the eye, dark spot under the soft dorsal
       { fn: (u, d) => { let c = mixc([0.95, 0.93, 0.8], [0.98, 0.8, 0.12], G.sstep(0.3, 0.6, u)); c = mixc(c, [0.03, 0.03, 0.03], G.sstep(0.09, 0.11, u) * G.sstep(0.18, 0.16, u)); const sp = Math.hypot((u - 0.68) * 3, d - 0.18); return mixc(c, [0.04, 0.04, 0.05], G.sstep(0.16, 0.12, sp)); }, fin: finRays([0.95, 0.8, 0.15], [0.98, 0.9, 0.4]) },
@@ -144,7 +144,9 @@
     const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.flipY = false; t.anisotropy = 4; return t;
   });
   G.fishMaterial = () => once('fishMat', () => {
-    const m = new THREE.MeshStandardMaterial({ map: G.fishAtlas(), roughness: 0.32, metalness: 0.15, side: THREE.DoubleSide }); const u = { uTime: G.uni.uTime }; m.userData.u = u;
+    // fish live under water: the bright sky environment barely reaches them, so they keep only a faint silvery sheen
+    // (full sky reflections made schools seen from the raft glow neon cyan)
+    const m = new THREE.MeshStandardMaterial({ map: G.fishAtlas(), roughness: 0.38, metalness: 0.06, envMapIntensity: 0.4, side: THREE.DoubleSide }); const u = { uTime: G.uni.uTime }; m.userData.u = u;
     m.onBeforeCompile = (sh) => {
       sh.uniforms.uTime = u.uTime;
       sh.vertexShader = 'uniform float uTime; attribute float aSp; attribute float aPh;\n' + sh.vertexShader

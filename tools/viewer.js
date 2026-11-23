@@ -16,7 +16,7 @@
       this.wx({ wind: 0.4, sea: 0.6, storm: 0, cloud: 0.35, rain: 0, fog: 0 }); const r = G.structs.raft; r.anchored = true; this.raft = r.pos.clone(); return 'ready';
     },
     wx(o) { G.wsim.until = 1e12; this._wx = Object.assign(this._wx || {}, o); Object.assign(G.weather, this._wx); },
-    run(n, fn) { G.state = 'play'; for (let i = 0; i < (n || 20); i++) { Object.assign(G.weather, this._wx); G.time.hour = this.hour; if (fn) fn(i); G.game.step(1 / 30); const cam = G.render.camera; G.sky.update(G.time.hour, 1 / 30, cam, G.player.pos); G.ocean.update(1 / 30, cam); if (G.groundCover) G.groundCover.update(cam.position); } G.state = 'paused'; G.render.fade = 0; G.render.frame(0.016); return 'ok'; },
+    run(n, fn) { G.state = 'play'; for (let i = 0; i < (n || 20); i++) { Object.assign(G.weather, this._wx); G.time.hour = this.hour; if (fn) fn(i); G.game.step(1 / 30); const cam = G.render.camera; G.sky.update(G.time.hour, 1 / 30, cam, G.player.pos); G.ocean.update(1 / 30, cam); if (G.groundCover) G.groundCover.update(cam.position); G.world.cullDeco(cam.position); } G.state = 'paused'; G.render.fade = 0; G.render.frame(0.016); return 'ok'; },
     pose(x, y, z, yaw, pitch) { const P = G.player; P.parent = null; P.climb = null; P.pos.set(x, y, z); P.vel.set(0, 0, 0); P.yaw = yaw; P.pitch = pitch; },
     dive(x, y, z, yaw, pitch, n) { return this.run(n || 6, () => this.pose(x, y, z, yaw, pitch)); },
     at(x, z, yaw, pitch, n) { G.world.stream(x, z, 1e9); return this.run(n || 10, () => this.pose(x, G.world.heightAt(x, z), z, yaw, pitch)); },

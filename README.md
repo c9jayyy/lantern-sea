@@ -81,15 +81,20 @@ Browser caveat: **Ctrl+W closes the tab** and a page cannot stop it; the game sa
   in fair weather, an overcast sky for storms, rotated to match the game's sun. Fog and ambient light follow the sky.
 - **Islands** — scanned sand, wet sand, seabed, rock, leaf litter and grass blended by height, slope and biome; scanned
   ferns, shrubs, boulders, conch shells and branches; procedural coconut palms (ringed grey-brown trunks weathered dark at
-  the base, folded arching fronds, dead fronds, green and brown coconut clusters); sea-almond trees with tiered branches and thousands of modelled leaves (a few
-  turned red); mango trees with dense domed crowns; grass tussocks made of real curved blades.
+  the base, folded arching fronds, dead fronds, green and brown coconut clusters); sea-almond trees with tiered branches and around eight thousand life-size
+  modelled leaves crowded at the twig tips (a few turned red); mango trees with dense domed crowns; grass tussocks made of real curved blades.
 - **Ground cover** — around the player, a dense carpet of short grass where the terrain is grassy, scattered pebbles,
-  twigs and dead leaves inland, and shells, coral rubble, driftwood and a seaweed wrack line on the beaches.
+  twigs and dead leaves inland; on the beaches a few ribbed shells and bits of worn coral, a high-tide line of tangled
+  sargassum (golden-brown stems with round air bladders) and now and then a crooked, weathered driftwood branch.
 - **Reefs** — patch reefs on the island shelves with sand channels between: around a diver, a dense field of branching
   and finger corals, brain, table and leather corals, sea fans, sponges, anemones, urchins, giant clams, sea stars,
-  coral rubble and sea grass; sparser coral further out, and giant kelp with gas floats. Reef plants sit on the real
-  sea floor.
-- **First person** — a forearm and hand that closes around each tool's handle, every tool posed for how it is used:
+  coral rubble and sea grass; sparser coral further out, and giant kelp with gas floats. Each kind grows in its own
+  clumps (staghorn thickets, stands of brain coral, the odd big old colony), branching corals have rounded forks and
+  tips, and brain corals carry winding, branching valleys. Reef plants sit on the real sea floor. The sea floor is drawn
+  in 32 m tiles and only near the camera (under water nothing further shows through the haze), which keeps a dive at
+  about 4 million triangles.
+- **First person** — a forearm and a fist that closes to the thickness of each tool's handle (fingers of real length
+  touching their neighbours, tapering joints, fingernails, a thumb pressed round the grip), every tool posed for how it is used:
   the paddle held diagonally with a shaped blade and a full stroke (reach, catch, pull, lift out), the spear levelled to
   thrust, a burning torch with a flickering layered flame that lights the hand, a knapped flint knife bound with cord,
   stone axes lashed to sticks, scanned steel axe and knife, a bow held at its leather grip

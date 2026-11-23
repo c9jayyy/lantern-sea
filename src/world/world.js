@@ -306,7 +306,28 @@
         for (let i = 0, got = 0; i < nk * 10 && got < nk; i++) { const x = I.x + (rnd() * 2 - 1) * RR, z = I.z + (rnd() * 2 - 1) * RR, h = this.heightAt(x, z); if (h > -5 || h < -24 || G.noise2(x * 0.03, z * 0.03, sd) > 0.48 || G.noise2(x * 0.012, z * 0.012, sd + 9) < 0.5) continue; const kc = 3 + Math.floor(rnd() * 5); for (let c = 0; c < kc; c++) { const kx = x + (rnd() - 0.5) * 7, kz = z + (rnd() - 0.5) * 7, kh = this.heightAt(kx, kz); if (kh > -4) continue; (byVis.kelp = byVis.kelp || []).push({ x: kx, y: kh - 0.05, z: kz, s: Math.min(1.5, (-kh - 1) / 10) * (0.8 + rnd() * 0.3), r: rnd() * 6.28, alive: true, deco: true }); } got++; }
       }
       const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), p = new THREE.Vector3(), sc = new THREE.Vector3();
-      inst.meshes = {};
+      inst.meshes = {}; inst.tiles = [];
+      // sea-floor decoration is split into 32 m tiles that are drawn only near the camera: under water nothing beyond
+      // ~45 m shows through the haze, and drawing a whole island's reef at once cost tens of millions of triangles
+      // (grass and fern tufts on land are tiled the same way, kind 1: they vanish past ~120 m and when the camera dives)
+      const TILE = 32, UNDER = { coral0: 0, coral1: 0, coral2: 0, coral3: 0, coral4: 0, coral5: 0, coral6: 0, coral7: 0, sponge: 0, seaweed: 0, kelp: 0, _rock1: 0, rock0: 0, rock1: 0, grass: 1, fern: 1 };
+      const tiledArr = {};
+      for (const v in byVis) {
+        const gs = G.nodeGeo[v]; if (!gs || UNDER[v] === undefined) continue;
+        const list = byVis[v].filter((n) => n.deco), rest = byVis[v].filter((n) => !n.deco); if (!list.length) continue;
+        if (rest.length) byVis[v] = rest; else delete byVis[v];
+        const tiles = new Map(); for (const n of list) { const k = Math.floor(n.x / TILE) + ',' + Math.floor(n.z / TILE); let a = tiles.get(k); if (!a) tiles.set(k, a = []); a.push(n); }
+        const arr = tiledArr[v] = [];
+        for (const [k, tl] of tiles) {
+          const [tx, tz] = k.split(',').map(Number);
+          for (const mk in gs) {
+            const geo = gs[mk]; if (!geo || !geo.isBufferGeometry) continue;
+            const im = new THREE.InstancedMesh(geo, G.mats[mk], tl.length); im.castShadow = false; im.receiveShadow = true;
+            tl.forEach((n, i) => { e.set(0, n.r, 0); q.setFromEuler(e); p.set(n.x, n.y, n.z); sc.set(n.s, n.s, n.s); im.setMatrixAt(i, m4.compose(p, q, sc)); });
+            im.instanceMatrix.needsUpdate = true; im.computeBoundingSphere(); im.frustumCulled = true; im.userData.tile = [(tx + 0.5) * TILE, (tz + 0.5) * TILE, UNDER[v]]; grp.add(im); arr.push(im); inst.tiles.push(im);
+          }
+        }
+      }
       for (const v in byVis) {
         const list = byVis[v], gs = G.nodeGeo[v]; if (!gs) continue; const arr = [];
         for (const mk in gs) {
@@ -321,10 +342,16 @@
         }
         inst.meshes[v] = arr;
       }
+      for (const v in tiledArr) if (!inst.meshes[v]) inst.meshes[v] = tiledArr[v];   // harvestable nodes keep their own (indexed) mesh
       // spatial hash for interaction and collision
       inst.nodeGrid = new Map();
       for (const n of nodes) { const k = Math.floor(n.x / 8) + ',' + Math.floor(n.z / 8); let a = inst.nodeGrid.get(k); if (!a) inst.nodeGrid.set(k, a = []); a.push(n); }
       inst.veg = grp; G.scene.add(grp);
+    },
+    // show only the sea-floor tiles within sight: closer under water (haze), further from above (seen through the surface)
+    cullDeco(cam) {
+      const uw = G.render && G.render.underwater, lim = [(uw ? 50 : 105) + 23, uw ? -1 : 120 + 23];
+      for (const I of this.islands) { const t = I.inst && I.inst.tiles; if (!t) continue; for (const im of t) { const c = im.userData.tile; im.visible = Math.hypot(c[0] - cam.x, c[1] - cam.z) < lim[c[2]]; } }
     },
     setNodeVisible(I, n, vis) {
       const arr = I.inst && I.inst.meshes && I.inst.meshes[n.v]; if (!arr) return;

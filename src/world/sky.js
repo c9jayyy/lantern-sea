@@ -31,9 +31,17 @@
     uniform sampler2D tSkyA; uniform sampler2D tSkyB; uniform sampler2D tSkyO; uniform sampler2D tSkyC; uniform float uHDR; uniform float uSkyMix; uniform float uOver; uniform float uCloudy;
     uniform vec4 uSkyRot; uniform vec4 uSkyScale; uniform vec4 uSkyCap; uniform float uSkyDark;
     vec3 hdrAt(sampler2D t, vec3 d, float rot, float cap){ vec2 uv = vec2(atan(d.z, d.x) * 0.1591549 + 0.5 - rot, asin(clamp(d.y, -1.0, 1.0)) * 0.3183099 + 0.5); vec3 c = textureLod(t, uv, 0.0).rgb; float l = max(c.r, max(c.g, c.b)); /* explicit level 0: no mip seam where the panorama wraps */ return c * min(1.0, cap / max(l, 1e-4)); }
+    vec3 skyAB(vec3 dd){ return mix(hdrAt(tSkyA, dd, uSkyRot.x, uSkyCap.x) * uSkyScale.x, hdrAt(tSkyB, dd, uSkyRot.y, uSkyCap.y) * uSkyScale.y, uSkyMix); }
     vec3 skyHDR(vec3 d){
       vec3 dd = vec3(d.x, max(d.y, 0.003), d.z);
-      vec3 c = mix(hdrAt(tSkyA, dd, uSkyRot.x, uSkyCap.x) * uSkyScale.x, hdrAt(tSkyB, dd, uSkyRot.y, uSkyCap.y) * uSkyScale.y, uSkyMix);
+      vec3 c = skyAB(dd);
+      // the night photo was taken on land: a town's light dome glows on its horizon. Out at sea the low sky may be only a
+      // little brighter than the sky above it, so cap it by the sky 20 degrees up in the same direction
+      if (uNight > 0.01 && dd.y < 0.34) {
+        vec3 up = skyAB(normalize(vec3(d.x, 0.34 * length(d.xz) / 0.94, d.z)));
+        vec3 capd = min(c, up * 1.25 + 0.0005); capd = mix(vec3(dot(capd, vec3(0.3333))), capd, 0.6);
+        c = mix(c, capd, uNight * smoothstep(0.34, 0.12, dd.y));
+      }
       if (uCloudy > 0.001) c = mix(c, hdrAt(tSkyC, dd, uSkyRot.w, uSkyCap.w) * uSkyScale.w, uCloudy);
       if (uOver > 0.001) c = mix(c, hdrAt(tSkyO, dd, uSkyRot.z, uSkyCap.z) * uSkyScale.z, uOver);
       c *= uSkyDark;

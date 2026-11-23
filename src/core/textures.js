@@ -82,7 +82,9 @@
     }, (h, u, v) => sc(mix3([92, 104, 112], [166, 178, 184], h * 0.8), 0.9 + tfbm(u, v, 3, 92, 2) * 0.2), 5);
     T.cloth = makeTex(128, (u, v) => (Math.sin(u * 128 * Math.PI * 0.5) * 0.5 + 0.5) * 0.5 + (Math.sin(v * 128 * Math.PI * 0.5) * 0.5 + 0.5) * 0.5,
       (h, u, v) => sc([226, 214, 188], 0.72 + h * 0.2 + tfbm(u, v, 4, 95, 3) * 0.16), 3);
-    T.rope = makeTex(64, (u, v) => (Math.sin((u + v * 2) * Math.PI * 8) * 0.5 + 0.5), (h) => mix3([110, 86, 52], [196, 168, 118], h), 6);
+    // three-strand laid hemp: rounded strands spiralling along the rope, each made of fine fibres, dark in the lays
+    T.rope = makeTex(256, (u, v) => { const s = ((u * 3 + v * 4) % 1 + 1) % 1, prof = Math.pow(Math.sin(s * Math.PI), 0.55); const fib = tn(u * 96 - v * 96, s * 6, 96, 121); return prof * (0.78 + fib * 0.22); },
+      (h, u, v) => { const t = 0.86 + tfbm(u, v, 6, 122, 3) * 0.28; return sc(mix3([58, 46, 30], [168, 142, 100], Math.min(1, h * 1.1)), t); }, 9);
     T.concrete = makeTex(256, (u, v) => tfbm(u, v, 8, 101, 5) * 0.7 + tn(u * 128, v * 128, 128, 102) * 0.3,
       (h, u, v) => { const st = G.sstep(0.55, 0.75, tfbm(u * 0.5, v * 2, 4, 103, 4)); return mix3(sc([168, 170, 166], 0.8 + h * 0.3), [96, 104, 92], st * 0.5); }, 4);
     T.leafy = makeTex(256, (u, v) => { const a = tfbm(u, v, 10, 111, 4); const b = 1 - Math.abs(tfbm(u, v, 14, 112, 3) * 2 - 1); return a * 0.5 + b * 0.5; },
@@ -150,7 +152,8 @@
     T.fernCard = leaves(9, [48, 120, 44]);
     // ---- reef ----
     // brain coral: meandering ridges from a domain-warped stripe field
-    T.brain = makeTex(256, (u, v) => { const w = tfbm(u, v, 3, 515, 3), w2 = tfbm(u, v, 5, 516, 2); return Math.pow(Math.abs(Math.sin((u * 9 + w * 2.6) * Math.PI * 2 + (v * 3 + w2 * 2.2) * Math.PI * 2)), 0.55); }, (h) => { const g = 95 + h * 150; return [g, g * 0.97, g * 0.9]; }, 9);
+    // brain coral: contour lines of a noise field give the winding, branching, closed valleys of a real colony
+    T.brain = makeTex(256, (u, v) => { const n = tfbm(u, v, 4, 515, 4) * 0.8 + tfbm(u, v, 9, 516, 2) * 0.2; return Math.pow(Math.abs(Math.sin(n * Math.PI * 16)), 0.6); }, (h, u, v) => { const t = 0.9 + tfbm(u, v, 7, 517, 3) * 0.2; return sc(mix3([118, 104, 74], [184, 166, 122], h), t); }, 9);   // grooves only a little darker than the ridges: the relief carries the pattern
     // polyp-studded surface for branching and plate corals
     T.polyp = makeTex(128, (u, v) => { const cu = (u * 10) % 1 - 0.5, cv = (v * 10 + Math.floor(u * 10) * 0.5) % 1 - 0.5; return Math.max(0, 1 - Math.hypot(cu, cv) * 2.6) * 0.45 + tfbm(u, v, 10, 517, 3) * 0.55; }, (h) => { const g = 120 + h * 135; return [g, g * 0.96, g * 0.9]; }, 3);
     T.kelpBlade = (() => { const c = document.createElement('canvas'); c.width = 128; c.height = 512; const g = c.getContext('2d'); const rnd = G.rng(61);
@@ -189,8 +192,9 @@
     M.dark = std({ color: 0x15181b, roughness: 0.7, metalness: 0.3 });
     // skin: fine pore and freckle noise, a warm subsurface tint, soft sheen (sun-tanned castaway)
     T.skin = makeTex(256, (u, v) => tfbm(u, v, 40, 611, 3) * 0.6 + tfbm(u, v, 9, 612, 2) * 0.4, (h, u, v) => { const k = 0.88 + h * 0.18, fr = tfbm(u, v, 22, 613, 2) > 0.68 ? 0.9 : 1; return [156 * k * fr, 112 * k * fr, 90 * k * fr]; }, 1.2);
-    M.skin = new THREE.MeshPhysicalMaterial({ map: T.skin.map, normalMap: T.skin.normalMap, roughness: 0.58, metalness: 0, sheen: 0.25, sheenRoughness: 0.7, sheenColor: new THREE.Color(0.75, 0.5, 0.42), emissive: 0x1a0805, emissiveIntensity: 0.3 });   // a little warmth for light scattering under the skin, without going orange
+    M.skin = new THREE.MeshPhysicalMaterial({ map: T.skin.map, normalMap: T.skin.normalMap, roughness: 0.58, metalness: 0, sheen: 0.25, sheenRoughness: 0.7, sheenColor: new THREE.Color(0.75, 0.5, 0.42) });   // no emissive: it made the hand glow in the dark
     M.skin.normalScale.set(0.25, 0.25);
+    M.nail = new THREE.MeshPhysicalMaterial({ color: 0xc99a88, roughness: 0.38, metalness: 0, clearcoat: 0.6, clearcoatRoughness: 0.35 });
     M.sleeve = std(Object.assign(rep(T.cloth, 6), { color: 0x6f7f86, roughness: 0.95 }));
     M.fabricBlue = std({ map: T.cloth.map, color: 0x3d5f86, roughness: 0.95 });
     M.fabricRed = std({ map: T.cloth.map, color: 0x9a4032, roughness: 0.95 });
@@ -209,7 +213,7 @@
     M.creature = std({ color: 0xffffff, roughness: 0.6, vertexColors: true });
     M.rockObj = std(Object.assign(rep(T.rock, 1), { roughness: 0.95, vertexColors: true }));
     M.coral = std({ map: T.polyp.map, normalMap: T.polyp.normalMap, roughness: 0.8, vertexColors: true });
-    M.brain = std({ map: T.brain.map, normalMap: T.brain.normalMap, roughness: 0.78, vertexColors: true }); M.brain.normalScale.set(1.4, 1.4);
+    M.brain = std({ map: T.brain.map, normalMap: T.brain.normalMap, roughness: 0.78, vertexColors: true }); M.brain.normalScale.set(0.85, 0.85);
     M.fan = swayPatch(std({ map: T.fan, alphaTest: 0.35, side: THREE.DoubleSide, roughness: 0.75, vertexColors: true }), 0.04);
     M.canopy = swayPatch(std({ map: T.leafy.map, normalMap: T.leafy.normalMap, roughness: 0.85, vertexColors: true }), 0.012);
     M.frond = swayPatch(std({ map: T.frond, alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.62, vertexColors: true }), 0.03);

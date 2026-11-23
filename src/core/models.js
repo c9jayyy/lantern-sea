@@ -175,19 +175,19 @@
         for (let k = 0; k < nB; k++) {
           const a = a0 + k / nB * 6.28 + (r() - 0.5) * 0.5, ca = Math.cos(a), sa = Math.sin(a), Lb = L0 * (0.8 + r() * 0.4);
           const pts = limb(b, [V3(tp.x, tp.y, tp.z), V3(tp.x + ca * Lb * 0.35, tp.y + Lb * 0.06, tp.z + sa * Lb * 0.35), V3(tp.x + ca * Lb * 0.7, tp.y + Lb * 0.02, tp.z + sa * Lb * 0.7), V3(tp.x + ca * Lb, tp.y + Lb * 0.16, tp.z + sa * Lb)], R0 * (0.5 - f * 0.2), 0.02, 'trunk', 6);
-          const e = tip(pts); leafCluster(L, r, e, 0.95 + Lb * 0.22, 0.38, 90, 'almond', 1.9, leafCol);
-          for (let s2 = 0; s2 < 2; s2++) { const m = pts[Math.round(pts.length * (0.45 + s2 * 0.2))], b2 = a + (s2 ? 0.7 : -0.7), l2 = Lb * 0.35; const p2 = limb(b, [V3(m.x, m.y, m.z), V3(m.x + Math.cos(b2) * l2 * 0.6, m.y + l2 * 0.05, m.z + Math.sin(b2) * l2 * 0.6), V3(m.x + Math.cos(b2) * l2, m.y + l2 * 0.2, m.z + Math.sin(b2) * l2)], 0.035, 0.012, 'trunk', 5); leafCluster(L, r, tip(p2), 0.75, 0.4, 45, 'almond', 1.8, leafCol); }
+          const e = tip(pts); leafCluster(L, r, e, 0.85 + Lb * 0.2, 0.38, 230, 'almond', 1.15, leafCol);
+          for (let s2 = 0; s2 < 2; s2++) { const m = pts[Math.round(pts.length * (0.45 + s2 * 0.2))], b2 = a + (s2 ? 0.7 : -0.7), l2 = Lb * 0.35; const p2 = limb(b, [V3(m.x, m.y, m.z), V3(m.x + Math.cos(b2) * l2 * 0.6, m.y + l2 * 0.05, m.z + Math.sin(b2) * l2 * 0.6), V3(m.x + Math.cos(b2) * l2, m.y + l2 * 0.2, m.z + Math.sin(b2) * l2)], 0.035, 0.012, 'trunk', 5); leafCluster(L, r, tip(p2), 0.68, 0.4, 110, 'almond', 1.1, leafCol); }
         }
       }
-      leafCluster(L, r, tip(trunk), 1.3, 0.5, 100, 'almond', 1.9, leafCol);
+      leafCluster(L, r, tip(trunk), 1.2, 0.5, 260, 'almond', 1.15, leafCol);
     } else {
       const nB = 7 + Math.floor(r() * 3), tp = tip(trunk);
       for (let k = 0; k < nB; k++) {
         const a = k / nB * 6.28 + r() * 0.5, ca = Math.cos(a), sa = Math.sin(a), up = 0.7 + r() * 0.5, Lb = H * (0.38 + r() * 0.14);
         const pts = limb(b, [V3(tp.x, tp.y, tp.z), V3(tp.x + ca * Lb * 0.35, tp.y + Lb * up * 0.4, tp.z + sa * Lb * 0.35), V3(tp.x + ca * Lb * 0.7, tp.y + Lb * up * 0.7, tp.z + sa * Lb * 0.7)], R0 * 0.55, 0.03, 'trunk', 6);
-        for (let q = 0; q < 3; q++) { const m = pts[Math.round((pts.length - 1) * (0.5 + q * 0.25))]; leafCluster(L, r, V3(m.x + ca * 0.4 * q, m.y + 0.3, m.z + sa * 0.4 * q), 0.9 + q * 0.2, 0.6, 80, 'mango', 1.5, leafCol); }
+        for (let q = 0; q < 3; q++) { const m = pts[Math.round((pts.length - 1) * (0.5 + q * 0.25))]; leafCluster(L, r, V3(m.x + ca * 0.4 * q, m.y + 0.3, m.z + sa * 0.4 * q), 0.9 + q * 0.2, 0.6, 150, 'mango', 1.05, leafCol); }
       }
-      leafCluster(L, r, V3(tp.x, tp.y + H * 0.42, tp.z), H * 0.24, 0.55, 160, 'mango', 1.5, leafCol);
+      leafCluster(L, r, V3(tp.x, tp.y + H * 0.42, tp.z), H * 0.24, 0.55, 330, 'mango', 1.05, leafCol);
     }
     const gs = b.geos(); gs.leaf3d = leafGeo(L); gs.h = H; return gs;
   }
@@ -273,10 +273,11 @@
   }
   // branching (staghorn) coral: tapering branches that fork and end in rounded, paler tips
   function coral(seed, col, lite) {
-    const b = new MB(), r = G.rng(seed), RS = lite ? 5 : 7, DEP = lite ? 2 : 4, TIP = lite ? 4 : 6;
+    const b = new MB(), r = G.rng(seed), RS = lite ? 6 : 9, DEP = lite ? 2 : 4, TIP = lite ? 6 : 9;
     const rec = (x, y, z, dx, dy, dz, len, rad, depth) => {
       const ex = x + dx * len, ey = y + dy * len, ez = z + dz * len, L = Math.hypot(ex - x, ey - y, ez - z);
       const g = G.geo.cyl(rad * 0.75, rad, L, RS); _q.setFromUnitVectors(_v.set(0, 1, 0), _p.set(dx, dy, dz).normalize()); _m.compose(_p.set((x + ex) / 2, (y + ey) / 2, (z + ez) / 2), _q, _s.set(1, 1, 1)); b.add(g, 'coral', _m, col);
+      if (depth > 0) b.sph(rad * 0.77, ex, ey, ez, 'coral', 1, 1, 1, col, RS);   // rounded fork, no crease where branches meet
       if (depth > 0) { const n = depth > 2 ? 2 : 2 + (r() < 0.4 ? 1 : 0); for (let i = 0; i < n; i++) { let nx = dx + (r() - 0.5) * 1.2, ny = dy + 0.15 + r() * 0.3, nz = dz + (r() - 0.5) * 1.2; const l = Math.hypot(nx, ny, nz); rec(ex, ey, ez, nx / l, ny / l, nz / l, len * (0.7 + r() * 0.15), rad * 0.72, depth - 1); } }
       else b.sph(rad * 0.8, ex, ey, ez, 'coral', 1, 1, 1, [Math.min(2, col[0] * 1.35), Math.min(2, col[1] * 1.35), Math.min(2, col[2] * 1.35)], TIP);
     };
