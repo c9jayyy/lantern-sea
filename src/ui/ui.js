@@ -158,11 +158,11 @@
       this.hudT -= dt; const P = G.player, inv = G.inv, A = G.actions;
       // every frame: prompt, charge, compass
       const t = P.target; let ph = '';
-      if (!G.input.locked && !this.cur) ph = '<span class="muted">Click to take control</span>';
+      if (!G.input.active() && !this.cur) ph = '<span class="muted">Click to take control</span>';
       else if (G.build.active) ph = '';
-      else if (P.mode === 'helm') ph = `<kbd>${G.keyLabel(G.settings.bindings.interact)}</kbd>Let go of the helm`;
-      else if (P.mode === 'boat') ph = `<kbd>${G.keyLabel(G.settings.bindings.interact)}</kbd>Step out`;
-      else if (t && t.label) ph = (t.key ? `<kbd>${G.keyLabel(G.settings.bindings.interact)}</kbd>` : '') + t.label + (t.hint ? `<span class="hint">${t.hint}</span>` : '');
+      else if (P.mode === 'helm') ph = `<kbd>${G.actLabel('interact')}</kbd>Let go of the helm`;
+      else if (P.mode === 'boat') ph = `<kbd>${G.actLabel('interact')}</kbd>Step out`;
+      else if (t && t.label) ph = (t.key ? `<kbd>${G.actLabel('interact')}</kbd>` : '') + t.label + (t.hint ? `<span class="hint">${t.hint}</span>` : '');
       this.set('prompt', ph); G.$('#cross').classList.toggle('act', !!(t && t.label));
       this.show('charge', A.charge > 0); if (A.charge > 0) G.$('#charge i').style.width = A.charge * 100 + '%';
       this.compass();

@@ -64,13 +64,13 @@
     update(dt) {
       const I = G.input, S = G.settings;
       if (this.parent) { const st = this.parent; st.toWorld(this.local.x, this.local.y, this.local.z, this.pos); this.yaw += st.dYaw; }
-      if (I.locked && this.mode !== 'sleep') {
+      if (I.active() && this.mode !== 'sleep') {
         const k = 0.0022 * S.sens * (this.zoom ? 0.3 : 1);
         // cap the turn a single frame can make (12 rad/s, at least 0.2 rad): no real hand turns faster, but a stray input burst can
         const cap = Math.max(0.2, 12 * dt), dYaw = G.clamp(I.mdx * k, -cap, cap), dPitch = G.clamp(I.mdy * k * (S.invertY ? -1 : 1), -cap, cap);
         this.yaw -= dYaw; this.pitch = G.clamp(this.pitch - dPitch, -1.5, 1.5);
       }
-      const ctl = I.locked && !G.ui.blocking();
+      const ctl = I.active() && !G.ui.blocking();
       if (this.mode === 'helm') this.updateHelm(dt, ctl);
       else if (this.mode === 'boat') G.vehicles.drive(dt, ctl);
       else if (this.climb) this.updateClimb(dt);

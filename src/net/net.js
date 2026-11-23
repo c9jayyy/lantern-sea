@@ -80,7 +80,7 @@ import Peer from 'peerjs';
     recv(m) {
       if (!m || !m.t) return;
       switch (m.t) {
-        case 'hello': this.partner = { name: m.name || 'Partner' }; this.say(this.partner.name + ' joined your game.', 'good'); break;
+        case 'hello': this.partner = { name: m.name || 'Partner' }; if (G.state === 'paused') G.state = 'play'; this.say(this.partner.name + ' joined your game.', 'good'); break;   // a shared world never stands still
         case 'welcome': this.partner = { name: m.name || 'Partner' }; this.joinWorld(m.save, m.at); break;
         case 'full': this.say('That game already has two players.', 'bad'); this.stop(true); break;
         case 'p': this.partnerState(m); break;

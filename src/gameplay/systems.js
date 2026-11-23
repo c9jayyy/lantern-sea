@@ -173,12 +173,14 @@
     list: [],
     spawn(id, n, meta, x, y, z) {
       const P = G.player; x = x == null ? P.pos.x + (Math.random() - 0.5) : x; z = z == null ? P.pos.z + (Math.random() - 0.5) : z; y = y == null ? P.pos.y + 0.15 : y;
-      const m = new THREE.Mesh(G.geo.box(0.32, 0.26, 0.32), G.mats.fabricTan); m.castShadow = true; G.scene.add(m);
-      const d = { id, n, meta, mesh: m, x, y, z, tag: 'drop', r: 0.6, parent: P.parent, born: T.now() }; if (d.parent) d.local = d.parent.toLocal(x, y, z);
+      let d = null;
+      // the item's own model at a real size (a tan parcel only if it has none)
+      let m = G.icons && G.icons.worldModel ? G.icons.worldModel(id, (nm) => { if (!this.list.includes(d)) return; G.scene.remove(d.mesh); d.mesh = nm; G.scene.add(nm); nm.position.set(d.x, d.y, d.z); }) : null; if (!m) { m = new THREE.Mesh(G.geo.box(0.32, 0.26, 0.32), G.mats.fabricTan); m.castShadow = true; } G.scene.add(m);
+      d = { id, n, meta, mesh: m, x, y, z, tag: 'drop', r: 0.6, parent: P.parent, born: T.now() }; if (d.parent) d.local = d.parent.toLocal(x, y, z);
       d.label = () => 'Pick up ' + G.ITEMS[id].n + (n > 1 ? ' ×' + n : ''); d.use = () => { const free = G.inv.slots.slice(0, G.inv.size()).some((s) => !s || (s.id === id && s.n < G.ITEMS[id].s)); if (!free) return G.ui.toast('No room.', 'bad'); this.remove(d); G.inv.add(id, n, meta); G.audio.sfx('pickup'); };
       this.list.push(d); G.interact.add(d); return d;
     },
-    remove(d) { G.scene.remove(d.mesh); d.mesh.geometry.dispose(); G.interact.remove(d); this.list.splice(this.list.indexOf(d), 1); },
+    remove(d) { G.scene.remove(d.mesh); if (d.mesh.isMesh) d.mesh.geometry.dispose(); G.interact.remove(d); this.list.splice(this.list.indexOf(d), 1); },
     update() { for (const d of this.list) { if (d.parent && G.structs.list.includes(d.parent)) { const w = d.parent.toWorld(d.local.x, d.local.y, d.local.z); d.x = w.x; d.y = w.y; d.z = w.z; } else { const wh = G.ocean.height(d.x, d.z), g = G.world.heightAt(d.x, d.z); d.y = Math.max(g + 0.13, wh - 0.05); } d.mesh.position.set(d.x, d.y, d.z); } },
     clear() { for (const d of [...this.list]) this.remove(d); },
     serialize() { return this.list.map((d) => ({ id: d.id, n: d.n, meta: d.meta, x: d.x, y: d.y, z: d.z })); },

@@ -56,6 +56,32 @@ All of these are from [Poly Haven](https://polyhaven.com) and are released under
 | Lambis Shell | Kuutti Siitonen | https://polyhaven.com/a/lambis_shell |
 | Tree Stump 01 | Rob Tuytel | https://polyhaven.com/a/tree_stump_01 |
 | Dead Tree Trunk 02 | Jenelle van Heerden, Rico Cilliers | https://polyhaven.com/a/dead_tree_trunk_02 |
+| Hatchet | James Ray Cock, Ulan Cabanilla | https://polyhaven.com/a/hatchet |
+| Machete | Ulan Cabanilla | https://polyhaven.com/a/machete |
+| Wooden Hammer 01 | James Ray Cock | https://polyhaven.com/a/wooden_hammer_01 |
+| Cross Pein Hammer | Tics | https://polyhaven.com/a/cross_pein_hammer |
+| Rusted Spade 01 | Blemonade | https://polyhaven.com/a/rusted_spade_01 |
+| Metal Detector | Kuutti Siitonen | https://polyhaven.com/a/metal_detector |
+| Binoculars | Derek Wight | https://polyhaven.com/a/binoculars |
+| Vintage Flashlight | Omar M. El-Safy | https://polyhaven.com/a/vintage_flashlight |
+| Bananas | Alexander Shulha | https://polyhaven.com/a/bananas |
+| Sweet Potato | Jan Martens | https://polyhaven.com/a/sweet_potato |
+| Russian Food Cans 01 | Kosan Aziz | https://polyhaven.com/a/russian_food_cans_01 |
+| Wooden Bowl 01 | Oliver Harries | https://polyhaven.com/a/wooden_bowl_01 |
+| Wooden Spoon | Ronnie Barter | https://polyhaven.com/a/wooden_spoon |
+| Planter Pot Clay | Amal Kumar | https://polyhaven.com/a/planter_pot_clay |
+| Wicker Basket 01 | Kuutti Siitonen | https://polyhaven.com/a/wicker_basket_01 |
+| Medical Tape | Miroslav Turura | https://polyhaven.com/a/medical_tape |
+| Metal Toolbox | Mateusz Sadek | https://polyhaven.com/a/metal_toolbox |
+| Metal Tool Chest | Yann Kervran, John Hutcheson | https://polyhaven.com/a/metal_tool_chest |
+| Magnifying Glass 01 | Nazar Borodavka | https://polyhaven.com/a/magnifying_glass_01 |
+| Circuit Board | Benny Weimer | https://polyhaven.com/a/circuit_board |
+| Lightbulb Led | Josh Dean | https://polyhaven.com/a/lightbulb_led |
+| Rubber Boots | L | https://polyhaven.com/a/rubber_boots |
+| Fishermans Hat | PierreB3D | https://polyhaven.com/a/fishermans_hat |
+| Old Tyre | MP | https://polyhaven.com/a/old_tyre |
+| Cement Bag | PierreB3D | https://polyhaven.com/a/cement_bag |
+| Compost Bag 02 | Satyaki Mandal | https://polyhaven.com/a/compost_bag_02 |
 
 ## Sound recordings — PDsounds.org collection on Wikimedia Commons (public domain)
 

@@ -102,7 +102,7 @@
 
     update() {
       if (!this.active) return; const I = G.input, P = G.player;
-      if (!I.locked || G.ui.blocking() || P.mode !== 'walk') { if (this.ghost) this.ghost.visible = false; return; }
+      if (!I.active() || G.ui.blocking() || P.mode !== 'walk') { if (this.ghost) this.ghost.visible = false; return; }
       if (I.hit('rotate') || I.wheel) this.rot = (this.rot + (I.wheel < 0 ? 3 : 1)) % 4;
       if (I.hit('demolish')) { if (this.demolish) return this.exit(); this.enterDemolish(); }
       if (I.mpressed[2]) return this.exit();

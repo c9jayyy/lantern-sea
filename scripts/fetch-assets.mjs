@@ -41,6 +41,15 @@ const MODELS = {
   fern: ['fern_02', 'foliage'], shrub: ['shrub_03', 'foliage'], sorrel: ['shrub_sorrel_01', 'foliage'], branches: ['dry_branches_medium_01', 'foliage'],
   rock_a: ['rock_07', 'environment'], rock_b: ['rock_09', 'environment'], stone: ['stone_01', 'environment'], boulder: ['boulder_01', 'environment'],
   conch: ['lambis_shell', 'environment'], stump: ['tree_stump_01', 'environment'], drift_log: ['dead_tree_trunk_02', 'environment'],
+  // scanned tools held in the hand (kept loaded)
+  hatchet: ['hatchet', 'tools'], machete: ['machete', 'tools'], mallet: ['wooden_hammer_01', 'tools'], hammer: ['cross_pein_hammer', 'tools'], spade: ['rusted_spade_01', 'tools'],
+  detector: ['metal_detector', 'tools'], binoculars: ['binoculars', 'tools'], flashlight: ['vintage_flashlight', 'tools'],
+};
+// scanned item models: loaded only while the item pictures are made at start-up (and again for an item dropped in the world)
+const ITEMS = {
+  bananas: 'bananas', sweet_potato: 'sweet_potato', food_cans: 'russian_food_cans_01', bowl: 'wooden_bowl_01', spoon: 'wooden_spoon', clay_pot: 'planter_pot_clay', basket: 'wicker_basket_01',
+  medical_tape: 'medical_tape', toolbox: 'metal_toolbox', tool_chest: 'metal_tool_chest', magnifier: 'magnifying_glass_01', circuit_board: 'circuit_board', led: 'lightbulb_led',
+  rubber_boots: 'rubber_boots', fishermans_hat: 'fishermans_hat', tyre: 'old_tyre', cement_bag: 'cement_bag', compost_bag: 'compost_bag_02',
 };
 
 // ---- helpers ------------------------------------------------------------------------------------------------------
@@ -74,7 +83,7 @@ async function download(url, dest, wantMd5) {
 async function pool(tasks, n) { let k = 0; await Promise.all(Array.from({ length: n }, async () => { while (k < tasks.length) { const t = tasks[k++]; try { await t(); } catch (e) { failures.push(e.message); console.error('  FAILED', e.message); } } })); }
 
 // ---- main ---------------------------------------------------------------------------------------------------------
-const manifest = { source: 'Poly Haven (polyhaven.com), CC0 1.0 — no attribution required', generated: new Date().toISOString(), textures: {}, hdris: {}, models: {}, credits: [] };
+const manifest = { source: 'Poly Haven (polyhaven.com), CC0 1.0 — no attribution required', generated: new Date().toISOString(), textures: {}, hdris: {}, models: {}, items: {}, credits: [] };
 const tasks = [];
 const info = await getJSON(`${API}/assets?t=all`);
 const credit = (id) => { const a = info[id] || {}; manifest.credits.push({ id, name: a.name || id, authors: Object.keys(a.authors || {}).join(', '), url: `https://polyhaven.com/a/${id}` }); };
@@ -100,6 +109,15 @@ for (const [name, [id, folder]] of Object.entries(MODELS)) {
   tasks.push(() => download(gl.url, join(OUT, base + fname), gl.md5));
   for (const [inc, v] of Object.entries(gl.include || {})) tasks.push(() => download(v.url, join(OUT, base + inc), v.md5));
   manifest.models[name] = { id, file: base + fname, polycount: (info[id] || {}).polycount || 0 };
+}
+
+for (const [name, id] of Object.entries(ITEMS)) {
+  const f = await getJSON(`${API}/files/${id}`); credit(id);
+  const g = f.gltf && (f.gltf['1k'] || f.gltf['2k']); if (!g) { console.warn(`  ${id}: no glTF`); continue; }
+  const base = `models/items/${id}/`; const gl = g.gltf; const fname = gl.url.split('/').pop();
+  tasks.push(() => download(gl.url, join(OUT, base + fname), gl.md5));
+  for (const [inc, v] of Object.entries(gl.include || {})) tasks.push(() => download(v.url, join(OUT, base + inc), v.md5));
+  manifest.items[name] = { id, file: base + fname, polycount: (info[id] || {}).polycount || 0 };
 }
 
 console.log(`fetching ${tasks.length} files…`);

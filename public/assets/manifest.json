@@ -1,6 +1,6 @@
 {
  "source": "Poly Haven (polyhaven.com), CC0 1.0 — no attribution required",
- "generated": "2026-11-16T13:59:14.981Z",
+ "generated": "2026-11-23T01:40:15.790Z",
  "textures": {
   "sand_dry": {
    "id": "coast_sand_01",
@@ -274,6 +274,138 @@
    "id": "dead_tree_trunk_02",
    "file": "models/environment/dead_tree_trunk_02/dead_tree_trunk_02_1k.gltf",
    "polycount": 155864
+  },
+  "hatchet": {
+   "id": "hatchet",
+   "file": "models/tools/hatchet/hatchet_1k.gltf",
+   "polycount": 5250
+  },
+  "machete": {
+   "id": "machete",
+   "file": "models/tools/machete/machete_1k.gltf",
+   "polycount": 3032
+  },
+  "mallet": {
+   "id": "wooden_hammer_01",
+   "file": "models/tools/wooden_hammer_01/wooden_hammer_01_1k.gltf",
+   "polycount": 3617
+  },
+  "hammer": {
+   "id": "cross_pein_hammer",
+   "file": "models/tools/cross_pein_hammer/cross_pein_hammer_1k.gltf",
+   "polycount": 2124
+  },
+  "spade": {
+   "id": "rusted_spade_01",
+   "file": "models/tools/rusted_spade_01/rusted_spade_01_1k.gltf",
+   "polycount": 11436
+  },
+  "detector": {
+   "id": "metal_detector",
+   "file": "models/tools/metal_detector/metal_detector_1k.gltf",
+   "polycount": 15518
+  },
+  "binoculars": {
+   "id": "binoculars",
+   "file": "models/tools/binoculars/binoculars_1k.gltf",
+   "polycount": 19248
+  },
+  "flashlight": {
+   "id": "vintage_flashlight",
+   "file": "models/tools/vintage_flashlight/vintage_flashlight_1k.gltf",
+   "polycount": 10562
+  }
+ },
+ "items": {
+  "bananas": {
+   "id": "bananas",
+   "file": "models/items/bananas/bananas_1k.gltf",
+   "polycount": 46868
+  },
+  "sweet_potato": {
+   "id": "sweet_potato",
+   "file": "models/items/sweet_potato/sweet_potato_1k.gltf",
+   "polycount": 2042
+  },
+  "food_cans": {
+   "id": "russian_food_cans_01",
+   "file": "models/items/russian_food_cans_01/russian_food_cans_01_1k.gltf",
+   "polycount": 1348
+  },
+  "bowl": {
+   "id": "wooden_bowl_01",
+   "file": "models/items/wooden_bowl_01/wooden_bowl_01_1k.gltf",
+   "polycount": 14122
+  },
+  "spoon": {
+   "id": "wooden_spoon",
+   "file": "models/items/wooden_spoon/wooden_spoon_1k.gltf",
+   "polycount": 6576
+  },
+  "clay_pot": {
+   "id": "planter_pot_clay",
+   "file": "models/items/planter_pot_clay/planter_pot_clay_1k.gltf",
+   "polycount": 3080
+  },
+  "basket": {
+   "id": "wicker_basket_01",
+   "file": "models/items/wicker_basket_01/wicker_basket_01_1k.gltf",
+   "polycount": 22276
+  },
+  "medical_tape": {
+   "id": "medical_tape",
+   "file": "models/items/medical_tape/medical_tape_1k.gltf",
+   "polycount": 1408
+  },
+  "toolbox": {
+   "id": "metal_toolbox",
+   "file": "models/items/metal_toolbox/metal_toolbox_1k.gltf",
+   "polycount": 14228
+  },
+  "tool_chest": {
+   "id": "metal_tool_chest",
+   "file": "models/items/metal_tool_chest/metal_tool_chest_1k.gltf",
+   "polycount": 14576
+  },
+  "magnifier": {
+   "id": "magnifying_glass_01",
+   "file": "models/items/magnifying_glass_01/magnifying_glass_01_1k.gltf",
+   "polycount": 7240
+  },
+  "circuit_board": {
+   "id": "circuit_board",
+   "file": "models/items/circuit_board/circuit_board_1k.gltf",
+   "polycount": 14430
+  },
+  "led": {
+   "id": "lightbulb_led",
+   "file": "models/items/lightbulb_led/lightbulb_led_1k.gltf",
+   "polycount": 6420
+  },
+  "rubber_boots": {
+   "id": "rubber_boots",
+   "file": "models/items/rubber_boots/rubber_boots_1k.gltf",
+   "polycount": 35004
+  },
+  "fishermans_hat": {
+   "id": "fishermans_hat",
+   "file": "models/items/fishermans_hat/fishermans_hat_1k.gltf",
+   "polycount": 10304
+  },
+  "tyre": {
+   "id": "old_tyre",
+   "file": "models/items/old_tyre/old_tyre_1k.gltf",
+   "polycount": 2880
+  },
+  "cement_bag": {
+   "id": "cement_bag",
+   "file": "models/items/cement_bag/cement_bag_1k.gltf",
+   "polycount": 844
+  },
+  "compost_bag": {
+   "id": "compost_bag_02",
+   "file": "models/items/compost_bag_02/compost_bag_02_1k.gltf",
+   "polycount": 12096
   }
  },
  "credits": [
@@ -576,6 +708,162 @@
    "name": "Dead Tree Trunk 02",
    "authors": "Jenelle van Heerden, Rico Cilliers",
    "url": "https://polyhaven.com/a/dead_tree_trunk_02"
+  },
+  {
+   "id": "hatchet",
+   "name": "Hatchet",
+   "authors": "James Ray Cock, Ulan Cabanilla",
+   "url": "https://polyhaven.com/a/hatchet"
+  },
+  {
+   "id": "machete",
+   "name": "Machete",
+   "authors": "Ulan Cabanilla",
+   "url": "https://polyhaven.com/a/machete"
+  },
+  {
+   "id": "wooden_hammer_01",
+   "name": "Wooden Hammer 01",
+   "authors": "James Ray Cock",
+   "url": "https://polyhaven.com/a/wooden_hammer_01"
+  },
+  {
+   "id": "cross_pein_hammer",
+   "name": "Cross Pein Hammer",
+   "authors": "Tics",
+   "url": "https://polyhaven.com/a/cross_pein_hammer"
+  },
+  {
+   "id": "rusted_spade_01",
+   "name": "Rusted Spade 01",
+   "authors": "Blemonade",
+   "url": "https://polyhaven.com/a/rusted_spade_01"
+  },
+  {
+   "id": "metal_detector",
+   "name": "Metal Detector",
+   "authors": "Kuutti Siitonen",
+   "url": "https://polyhaven.com/a/metal_detector"
+  },
+  {
+   "id": "binoculars",
+   "name": "Binoculars",
+   "authors": "Derek Wight",
+   "url": "https://polyhaven.com/a/binoculars"
+  },
+  {
+   "id": "vintage_flashlight",
+   "name": "Vintage Flashlight",
+   "authors": "Omar M. El-Safy",
+   "url": "https://polyhaven.com/a/vintage_flashlight"
+  },
+  {
+   "id": "bananas",
+   "name": "Bananas",
+   "authors": "Alexander Shulha",
+   "url": "https://polyhaven.com/a/bananas"
+  },
+  {
+   "id": "sweet_potato",
+   "name": "Sweet Potato",
+   "authors": "Jan Martens",
+   "url": "https://polyhaven.com/a/sweet_potato"
+  },
+  {
+   "id": "russian_food_cans_01",
+   "name": "Russian Food Cans 01",
+   "authors": "Kosan Aziz",
+   "url": "https://polyhaven.com/a/russian_food_cans_01"
+  },
+  {
+   "id": "wooden_bowl_01",
+   "name": "Wooden Bowl 01",
+   "authors": "Oliver Harries",
+   "url": "https://polyhaven.com/a/wooden_bowl_01"
+  },
+  {
+   "id": "wooden_spoon",
+   "name": "Wooden Spoon",
+   "authors": "Ronnie Barter",
+   "url": "https://polyhaven.com/a/wooden_spoon"
+  },
+  {
+   "id": "planter_pot_clay",
+   "name": "Planter Pot Clay",
+   "authors": "Amal Kumar",
+   "url": "https://polyhaven.com/a/planter_pot_clay"
+  },
+  {
+   "id": "wicker_basket_01",
+   "name": "Wicker Basket 01",
+   "authors": "Kuutti Siitonen",
+   "url": "https://polyhaven.com/a/wicker_basket_01"
+  },
+  {
+   "id": "medical_tape",
+   "name": "Medical Tape",
+   "authors": "Miroslav Turura",
+   "url": "https://polyhaven.com/a/medical_tape"
+  },
+  {
+   "id": "metal_toolbox",
+   "name": "Metal Toolbox",
+   "authors": "Mateusz Sadek",
+   "url": "https://polyhaven.com/a/metal_toolbox"
+  },
+  {
+   "id": "metal_tool_chest",
+   "name": "Metal Tool Chest",
+   "authors": "Yann Kervran, John Hutcheson",
+   "url": "https://polyhaven.com/a/metal_tool_chest"
+  },
+  {
+   "id": "magnifying_glass_01",
+   "name": "Magnifying Glass 01",
+   "authors": "Nazar Borodavka",
+   "url": "https://polyhaven.com/a/magnifying_glass_01"
+  },
+  {
+   "id": "circuit_board",
+   "name": "Circuit Board",
+   "authors": "Benny Weimer",
+   "url": "https://polyhaven.com/a/circuit_board"
+  },
+  {
+   "id": "lightbulb_led",
+   "name": "Lightbulb Led",
+   "authors": "Josh Dean",
+   "url": "https://polyhaven.com/a/lightbulb_led"
+  },
+  {
+   "id": "rubber_boots",
+   "name": "Rubber Boots",
+   "authors": "L",
+   "url": "https://polyhaven.com/a/rubber_boots"
+  },
+  {
+   "id": "fishermans_hat",
+   "name": "Fishermans Hat",
+   "authors": "PierreB3D",
+   "url": "https://polyhaven.com/a/fishermans_hat"
+  },
+  {
+   "id": "old_tyre",
+   "name": "Old Tyre",
+   "authors": "MP",
+   "url": "https://polyhaven.com/a/old_tyre"
+  },
+  {
+   "id": "cement_bag",
+   "name": "Cement Bag",
+   "authors": "PierreB3D",
+   "url": "https://polyhaven.com/a/cement_bag"
+  },
+  {
+   "id": "compost_bag_02",
+   "name": "Compost Bag 02",
+   "authors": "Satyaki Mandal",
+   "url": "https://polyhaven.com/a/compost_bag_02"
   }
  ]
 }

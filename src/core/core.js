@@ -106,6 +106,9 @@
     if (!code) return '—';
     return code.replace('Key', '').replace('Digit', '').replace('ShiftLeft', 'Shift').replace('ControlLeft', 'Ctrl').replace('ArrowUp', '↑').replace('ArrowDown', '↓');
   };
+  // the label for an action on whatever is in use: a controller button when a pad is active, otherwise the key
+  G.actLabel = (a) => (G.pad && G.pad.on ? G.pad.label(G.settings.padBindings[a]) : G.keyLabel(G.settings.bindings[a]));
+  I.active = () => I.locked;
   I.init = function (canvas) {
     I.canvas = canvas;
     window.addEventListener('keydown', (e) => {

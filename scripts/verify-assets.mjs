@@ -9,7 +9,7 @@ const M = JSON.parse(await readFile(join(OUT, 'manifest.json'), 'utf8'));
 const files = [];
 for (const t of Object.values(M.textures)) files.push(...Object.values(t.maps));
 for (const h of Object.values(M.hdris)) files.push(h.file);
-for (const m of Object.values(M.models)) {
+for (const m of Object.values(M.models).concat(Object.values(M.items || {}))) {
   files.push(m.file); const g = JSON.parse(await readFile(join(OUT, m.file), 'utf8')); const base = dirname(m.file);
   for (const x of [...(g.buffers || []), ...(g.images || [])]) if (x.uri) files.push(join(base, x.uri).split('\\').join('/'));
 }

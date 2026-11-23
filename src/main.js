@@ -2,6 +2,7 @@
 import './style.css';
 import './three-global.js';
 import './core/core.js';
+import './core/gamepad.js';
 import './core/assets.js';
 import './core/textures.js';
 import './world/sky.js';
@@ -30,6 +31,7 @@ import './core/audio.js';
 import './ui/ui.js';
 import './ui/ui_panels.js';
 import './ui/icons.js';
+import './ui/items3d.js';
 import './net/net.js';
 import './core/game.js';
 

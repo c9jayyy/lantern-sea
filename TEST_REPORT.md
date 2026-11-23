@@ -5,7 +5,17 @@ This is the third version: the project moved to a Vite + Three.js layout with re
 PBR textures and glTF models), recorded sound effects, a rebuilt underwater renderer, and rebuilt animals.
 Environment: Chromium 156 embedded browser, WebGL2, AMD Radeon RX 6600 (ANGLE / Direct3D 11).
 
-**Latest self-test: 70 of 70 passed, 0 console errors** (dev build, 22 November 2026, after the graphics review round:
+**Latest self-test: 71 of 71 passed, 0 console errors** (dev build, 22 November 2026, controller and item-model round).
+New check: opening the pause menu pauses and closing it resumes play. It covers a bug from the co-op round, where a
+comment swallowed the game's resume function: every menu closed into a frozen game with no HUD, which is what the host
+saw when a partner joined. Co-op was re-tested in two tabs: host invites with the pause menu open, partner joins, the
+host's world keeps running, the invite closes back to play with the HUD, the host walks and Esc works.
+Controllers were tested with a simulated standard-mapping pad (no physical pad on the test machine): menu navigation,
+starting a game, walking, looking, charging and throwing the hook with RT, Y/B/Start/View/RB, and picking up and
+placing a stack in the inventory with A and the D-pad. The 26 new Poly Haven models pass checksum verification
+(`npm run verify-assets`: 328 files, 0 problems). Dropped items were checked in the world at real size.
+
+Previous: 70 of 70 (dev build, 22 November 2026, after the graphics review round:
 rebuilt first-person fist and fingernails, laid hemp rope, natural fish under the surface, sargassum wrack line and
 driftwood, clustered reef with smoother corals and winding brain coral, life-size tree leaves, no town glow on the night
 horizon, and sea-floor tiling that cut a dive from 29 to about 4 million triangles; `npm run build` succeeds). An earlier

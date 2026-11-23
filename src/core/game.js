@@ -83,7 +83,9 @@
       const raft = G.structs.starterRaft(this.menuC.x, this.menuC.z); raft.anchored = true; G.structs.addTile(raft, 2, 0, 0, 'foundation'); G.structs.addTile(raft, 2, 1, 0, 'foundation'); raft.rebuild(); raft.addItem(2, 0, 0, 'sail', 0); raft.addItem(0, 0, 0, 'chest', 1); raft.addItem(2, 1, 0, 'lantern', 0); raft.sailOpen = true; raft.rebuild(); for (const it of raft.items.values()) G.items.refresh(it);
       G.player.pos.set(this.menuC.x, 0.4, this.menuC.z); G.world.stream(this.menuC.x, this.menuC.z, 1e9);
     },
-    pause() { if (G.state === 'play' && !(G.net && G.net.connected())) G.state = 'paused'; },   // the world keeps running while a partner is connected resume() { if (G.state === 'paused') G.state = 'play'; },
+    // the world keeps running while a partner is connected
+    pause() { if (G.state === 'play' && !(G.net && G.net.connected())) G.state = 'paused'; },
+    resume() { if (G.state === 'paused') G.state = 'play'; },
     onDeath(cause) { G.journal.stat('deaths'); G.audio.sfx('hurt'); if (G.fishing.active) G.fishing.cancel(); if (G.build.active) G.build.exit(); G.player.leaveHelm(); if (G.vehicles.current) G.vehicles.leave(); G.ui.fade(0.75, 1500); setTimeout(() => G.ui.open('death', cause), 900); },
     respawn() {
       const P = G.player, D = G.DIFF[this.difficulty], inv = G.inv;
@@ -108,7 +110,7 @@
     photo(on) {
       G.photo = on; let p = G.$('#photo'); if (p) p.remove(); if (!on) return; p = G.el('div', '', 'Photo mode — WASD and mouse to fly · Space / Ctrl up and down · Enter saves a PNG · Esc returns'); p.id = 'photo'; G.ui.root.appendChild(p); G.input.lock(); this.pc = { yaw: G.player.yaw, pitch: G.player.pitch };
     },
-    photoFly(dt) { const I = G.input, c = G.camera, pc = this.pc; if (I.locked) { pc.yaw -= I.mdx * 0.0022; pc.pitch = G.clamp(pc.pitch - I.mdy * 0.0022, -1.5, 1.5); } c.rotation.set(pc.pitch, pc.yaw, 0, 'YXZ'); const sp = (I.keys.ShiftLeft ? 30 : 8) * dt, f = (I.keys.KeyW ? 1 : 0) - (I.keys.KeyS ? 1 : 0), s = (I.keys.KeyD ? 1 : 0) - (I.keys.KeyA ? 1 : 0), v = new THREE.Vector3(s, 0, -f).applyEuler(c.rotation); c.position.addScaledVector(v, sp); c.position.y += ((I.keys.Space ? 1 : 0) - (I.keys.ControlLeft ? 1 : 0)) * sp; c.updateMatrixWorld(); },
+    photoFly(dt) { const I = G.input, c = G.camera, pc = this.pc; if (I.active()) { pc.yaw -= I.mdx * 0.0022; pc.pitch = G.clamp(pc.pitch - I.mdy * 0.0022, -1.5, 1.5); } c.rotation.set(pc.pitch, pc.yaw, 0, 'YXZ'); const sp = (I.keys.ShiftLeft ? 30 : 8) * dt, f = (I.keys.KeyW ? 1 : 0) - (I.keys.KeyS ? 1 : 0), s = (I.keys.KeyD ? 1 : 0) - (I.keys.KeyA ? 1 : 0), v = new THREE.Vector3(s, 0, -f).applyEuler(c.rotation); c.position.addScaledVector(v, sp); c.position.y += ((I.keys.Space ? 1 : 0) - (I.keys.ControlLeft ? 1 : 0)) * sp; c.updateMatrixWorld(); },
 
     // ---------- boot ----------
     boot() {
@@ -117,7 +119,7 @@
         ['Loading skies, textures and models…', () => G.assets.load((f, label) => G.ui.loading('Loading ' + label + '…', 0.05 + f * 0.3))],
         ['Weaving textures…', () => G.buildTextures()], ['Growing palms and coral…', () => G.buildNodeGeos()],
         ['Filling the sea…', () => { G.render.init(canvas); G.sky.init(G.scene); G.ocean.init(G.scene); G.fx.init(); G.chips.init(); G.actions.init(); G.debris.init(); G.fishing.init(); G.wildlife.init(); G.groundCover.init(G.scene); G.lightPool.init(); G.skills.reset(); G.quests.init(); G.input.init(canvas); }],
-        ['Photographing the supplies…', () => { try { G.icons.renderAll(); } catch (e) { console.warn('item icons fell back to symbols:', e); } }],
+        ['Photographing the supplies…', () => G.assets.loadItems((f) => G.ui.loading('Photographing the supplies…', 0.86 + f * 0.08)).then(() => { try { G.icons.renderAll(); } catch (e) { console.warn('item icons fell back to symbols:', e); } G.assets.freeItems(); })],
         ['Lighting the lanterns…', () => { this.menuScene(); }]
       ];
       let i = 0; const next = () => { if (i >= steps.length) { G.ui.loading(null); G.ui.showMenu(); this.last = performance.now(); requestAnimationFrame((t) => this.loop(t)); return; } G.ui.loading(steps[i][0], 0.1 + i / steps.length * 0.85); setTimeout(() => { try { Promise.resolve(steps[i][1]()).then(() => { i++; next(); }, (e) => this.fatal(e)); } catch (e) { this.fatal(e); } }, 30); };
@@ -130,6 +132,7 @@
       requestAnimationFrame((t) => this.loop(t));
       const lim = G.settings.fpsLimit; if (lim && now - this.last < 1000 / lim - 1.5) return;
       let dt = (now - this.last) / 1000; this.last = now; if (dt > 0.1) dt = 0.1; if (dt <= 0) return;
+      if (G.pad) try { G.pad.poll(dt); } catch (e) { console.warn('[pad]', e); }
       try { this.step(dt); this.errs = 0; } catch (e) { this.errs = (this.errs || 0) + 1; if (this.errs < 3) console.error(e); if (this.errs === 3) G.ui.toast('An internal error keeps recurring: ' + e.message + '. Save from the pause menu and reload if things look wrong.', 'bad'); }
       G.input.endFrame();
     },

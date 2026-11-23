@@ -197,16 +197,33 @@
   const SWING_OF = { axe: 'chop', pick: 'chop', mallet: 'chop', knife: 'slash', spear: 'thrust', shovel: 'dig', hook: 'throw', rod: 'cast', bow: 'recoil' };
   const keyAt = (K, p, out) => { let k = 0; while (k < K.length - 2 && K[k + 1][0] < p) k++; const a = K[k], c = K[k + 1], f = G.sstep(0, 1, (p - a[0]) / Math.max(1e-4, c[0] - a[0])); for (let i = 1; i < 7; i++) out[i - 1] = a[i] + (c[i] - a[i]) * f; return out; };
   const _kv = [0, 0, 0, 0, 0, 0];
+  // scanned tools (Poly Haven) for these items: [model, length, where the hand closes as a fraction of the length,
+  // which end is heavier: 'top' = head up (axes, hammers, blades), 'bottom' = blade down (spade)]
+  const HELD = { hatchet: ['hatchet', 0.44, 0.16, 'top'], hatchet_steel: ['hatchet', 0.44, 0.16, 'top'], machete: ['machete', 0.6, 0.1, 'top', Math.PI / 2], machete_steel: ['machete', 0.6, 0.1, 'top', Math.PI / 2],
+    mallet: ['mallet', 0.36, 0.2, 'top'], hammer: ['hammer', 0.34, 0.2, 'top'], shovel: ['spade', 1.05, 0.9, 'bottom'], shovel_steel: ['spade', 1.05, 0.9, 'bottom'] };
+  function heldScan(id) {
+    const h = HELD[id]; if (!h || !G.assets.models[h[0]]) return null; const t = new G.MB(); if (!G.assets.addToUpright(t, h[0], h[1], 0)) return null;
+    // which end is wider: measure the spread of the lowest and highest sixth
+    let lo = 1e9, hi = -1e9; for (const k in t.parts) { const p = t.parts[k].pos; for (let i = 1; i < p.length; i += 3) { lo = Math.min(lo, p[i]); hi = Math.max(hi, p[i]); } }
+    const band = (y0, y1) => { let x0 = 1e9, x1 = -1e9, z0 = 1e9, z1 = -1e9; for (const k in t.parts) { const p = t.parts[k].pos; for (let i = 0; i < p.length; i += 3) if (p[i + 1] >= y0 && p[i + 1] <= y1) { x0 = Math.min(x0, p[i]); x1 = Math.max(x1, p[i]); z0 = Math.min(z0, p[i + 2]); z1 = Math.max(z1, p[i + 2]); } } return Math.max(x1 - x0, z1 - z0, 0); };
+    const L = hi - lo, wl = band(lo, lo + L / 6), wh = band(hi - L / 6, hi), flip = h[3] === 'top' ? wl > wh : wh > wl;
+    const b = new G.MB(); const m = new THREE.Matrix4(); if (flip) m.makeRotationZ(Math.PI).premultiply(new THREE.Matrix4().makeTranslation(0, lo + hi, 0));
+    const gy = (flip ? hi - (hi - lo) * h[2] : lo + (hi - lo) * h[2]); m.premultiply(new THREE.Matrix4().makeTranslation(0, -(flip ? lo + hi - gy : gy), 0));
+    if (h[4]) m.premultiply(new THREE.Matrix4().makeRotationY(h[4]));   // turn the flat of a blade toward the eye
+    // the grip point is at the origin, where the fist closes
+    b.merge(t, m); return b;
+  }
   G.HAND = HAND; G.stoneHead = stoneHead;
   const A = G.actions = {
     hand: null, handKey: '', charge: 0, cd: 0, paddleT: 0, sandT: 0, target: null,
     init() { this.handRoot = new THREE.Group(); this.handRoot.position.set(0.4, -0.42, -0.72); G.camera.add(this.handRoot); this.torchLight = new THREE.PointLight(0xff9a4a, 0, 16, 1.6); this.torchLight.layers.enableAll(); G.camera.add(this.torchLight); this.torchLight.position.set(0.3, 0, -0.4); },
     setHand(stack) {
-      const def = stack && G.ITEMS[stack.id]; const key = def && def.tool && HAND[def.tool.type] ? def.tool.type + (def.tool.tier > 0 ? 1 : 0) : '';
+      const def = stack && G.ITEMS[stack.id]; const key = def && def.tool && HAND[def.tool.type] ? (HELD[stack.id] && G.assets.models[HELD[stack.id][0]] ? stack.id : def.tool.type + (def.tool.tier > 0 ? 1 : 0)) : '';
       if (key === this.handKey) return; this.handKey = key; if (this.hand) { G.disposeGroup(this.hand); this.hand = null; }
-      if (!key) return; const b = new G.MB(), ty = def.tool.type; HAND[ty](b, def.tool.tier > 0);
+      if (!key) return; let b = new G.MB(); const ty = def.tool.type, hs = heldScan(stack.id);
+      if (hs) b = hs; else HAND[ty](b, def.tool.tier > 0);
       // the hand closes on the handle; scanned tools sit on their base, so their grip height differs
-      const scanned = def.tool.tier > 0 && G.assets.models[ty === 'axe' ? 'axe' : 'knife'] && (ty === 'axe' || ty === 'knife'), gy = scanned ? GRIP_SCAN[ty] : (GRIP[ty] != null ? GRIP[ty] : -0.1);
+      const scanned = def.tool.tier > 0 && G.assets.models[ty === 'axe' ? 'axe' : 'knife'] && (ty === 'axe' || ty === 'knife'), gy = hs ? 0 : scanned ? GRIP_SCAN[ty] : (GRIP[ty] != null ? GRIP[ty] : -0.1);
       // every tool is moved so its grip sits at the hand's origin, so the hand is always where the pose puts it
       const fb = new G.MB(); fb.merge(b, fb.mat4(0, -gy, 0)); const ab = new G.MB(); arm(ab, HANDLE_R[ty]); fb.merge(ab, fb.mat4(0, 0, 0));
       this.hand = fb.build({ shadow: false }); const pose = POSE[ty] || POSE.def; this.hand.userData.pose = pose; this.hand.userData.ty = ty;
@@ -313,7 +330,7 @@
       for (let i = this.falling.length - 1; i >= 0; i--) { const f = this.falling[i]; f.t += dt; const a = Math.min(1.5, f.t * f.t * 1.3); f.grp.rotation.set(Math.cos(f.ax) * a, f.grp.rotation.y, Math.sin(f.ax) * a); if (f.t > 1.6) { f.grp.scale.multiplyScalar(0.9); } if (f.t > 2.1) { G.scene.remove(f.grp); this.falling.splice(i, 1); } }
       if (this.shake > 0 && this.shakeNode) { this.shake -= dt; const { n, I: isl } = this.shakeNode; if (n.alive && isl.inst && isl.inst.meshes) { const arr = isl.inst.meshes[n.v]; if (arr) { const k = this.shake > 0 ? Math.sin(this.shake * 60) * 0.03 * this.shake * 4 : 0; _m.compose(_v.set(n.x, n.y, n.z), new THREE.Quaternion().setFromEuler(new THREE.Euler(k, n.r, k)), new THREE.Vector3(n.s, n.s, n.s)); for (const im of arr) { im.setMatrixAt(n.ii, _m); im.instanceMatrix.needsUpdate = true; } } } }
       if (G.state !== 'play' || !P.alive) return;
-      const ctl = I.locked && !G.ui.blocking();
+      const ctl = I.active() && !G.ui.blocking();
       const held = inv.held(), def = held && G.ITEMS[held.id], tool = def && def.tool;
       this.setHand(held);
       // hand animation

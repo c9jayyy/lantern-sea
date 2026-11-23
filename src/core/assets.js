@@ -28,6 +28,23 @@
       for (const set of Object.values(this.tex)) for (const [map, t] of Object.entries(set)) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = aniso; t.colorSpace = map === 'diff' ? THREE.SRGBColorSpace : THREE.NoColorSpace; t.needsUpdate = true; }
     },
     has(name) { return !!this.tex[name] && !!this.tex[name].diff; },
+    // scanned item models are not kept: they load for the item pictures at start-up, are freed, and an item lying in the
+    // world loads its own again (from the browser cache)
+    _itemLoads: {},
+    loadItem(name) {
+      const M = this.manifest, m = M && M.items && M.items[name]; if (!m) return Promise.resolve(false); if (this.models[name]) return Promise.resolve(true);
+      if (!this._itemLoads[name]) this._itemLoads[name] = new THREE.GLTFLoader().loadAsync(this.url(m.file)).then((g) => { this.models[name] = Object.assign({ gltf: g, item: true }, m); delete this._itemLoads[name]; return true; }, (e) => { console.warn('item model failed', name, e && e.message); delete this._itemLoads[name]; return false; });
+      return this._itemLoads[name];
+    },
+    loadItems(progress) { const names = Object.keys((this.manifest && this.manifest.items) || {}); let d = 0; return Promise.all(names.map((n) => this.loadItem(n).then(() => { d++; if (progress) progress(d / names.length); }))); },
+    freeItems(keep) {
+      for (const name of Object.keys(this.models)) {
+        const m = this.models[name]; if (!m.item || (keep && keep.has(name))) continue;
+        m.gltf.scene.traverse((o) => { if (o.geometry) o.geometry.dispose(); const ms = o.material ? (Array.isArray(o.material) ? o.material : [o.material]) : []; for (const mt of ms) { for (const k of ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap']) if (mt[k]) { if (mt[k].image && mt[k].image.close) mt[k].image.close(); mt[k].dispose(); } mt.dispose(); } });
+        delete this.models[name]; for (const id in this._geo || {}) if (id.startsWith(name + ':')) { for (const g of Object.values(this._geo[id])) g.dispose(); delete this._geo[id]; }
+        for (const k of Object.keys(G.mats)) if (k.startsWith('gl_' + name + '_')) { G.mats[k].dispose(); delete G.mats[k]; }
+      }
+    },
     // a downloaded model as the game's instancing format { materialKey: geometry }: one merged geometry per material,
     // base on y = 0, centred, scaled so its largest extent (or height with o.byHeight) equals o.size. Materials go into G.mats.
     geos(name, o) {

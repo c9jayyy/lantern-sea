@@ -180,6 +180,7 @@
   let _rows = {};
   function rowTex(row) { if (_rows[row]) return _rows[row]; const a = G.fishAtlas(), img = a.image, h = img.height / G.FISH_SPECIES, cv = document.createElement('canvas'); cv.width = img.width; cv.height = h; cv.getContext('2d').drawImage(img, 0, -row * h); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.flipY = false; return (_rows[row] = t); }
 
+  ICON.T = T; ICON.S = S; ICON.col = col; ICON.build = buildFor;
   ICON.renderAll = function () {
     // orthographic three-quarter view, framed tightly on the object's actual silhouette
     const r = G.render.renderer, scene = new THREE.Scene(), cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.01, 100); cam.layers.enableAll();

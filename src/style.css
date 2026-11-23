@@ -378,3 +378,7 @@ img.ico { width: 1.2em; height: 1.2em; object-fit: contain; vertical-align: -.28
 input.codein { display: block; width: 9em; margin: .4em auto 0; text-align: center; font-size: 1.6em; letter-spacing: .3em; text-transform: uppercase; font-weight: 700; }
 #chatbox { position: absolute; left: 1.5em; bottom: 9em; width: 26em; pointer-events: auto; } #chatbox input { width: 100%; background: rgba(8, 11, 14, .78); border: 1px solid rgba(255, 255, 255, .2); padding: .6em .8em; backdrop-filter: blur(8px); }
 .swatch { pointer-events: auto; cursor: pointer; width: 1.5em; height: 1.5em; border-radius: 4px; border: 2px solid rgba(255, 255, 255, .15); } .swatch.round { border-radius: 50%; } .swatch.on { border-color: var(--brass); box-shadow: 0 0 0 2px rgba(240, 180, 85, .35); }
+
+/* controller: the highlighted thing in menus */
+.padfocus { outline: 2px solid #ffd27a !important; outline-offset: 2px; box-shadow: 0 0 0 4px rgba(255, 210, 122, .22), 0 0 18px rgba(255, 210, 122, .35) !important; position: relative; z-index: 2; }
+body.pad #ui .x:not(.padfocus) { opacity: .55; }

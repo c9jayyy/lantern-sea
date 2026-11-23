@@ -42,6 +42,26 @@ The connection is made with WebRTC (PeerJS): the free public PeerJS server only 
 the game data travels directly between them. A few strict networks (some offices, some mobile hotspots) block direct
 connections; if joining hangs at "Still trying…", try a different network.
 
+## Controllers
+
+Any controller the browser sees works: Xbox, PlayStation (shown with Cross/Circle/Square/Triangle labels), Switch Pro
+and most generic pads. Plug it in or pair it and press a button; using the mouse or keyboard switches back.
+
+| Button | Action | Button | Action |
+|---|---|---|---|
+| Left stick | Move (click: sprint) | Right stick | Look |
+| A | Jump / swim up | B | Crouch / dive down |
+| X | Interact | Y | Inventory |
+| RT | Use tool, strike, place | LT | Eat / drink / use item |
+| LB / RB | Hotbar previous / next | R-stick click | Dive light |
+| D-pad up | Crafting | D-pad down | Drop held item |
+| D-pad left | Build menu | D-pad right | Rotate piece |
+| View | Chart | Menu | Pause |
+
+In menus the D-pad or left stick moves a highlight, A selects, B goes back, X moves a whole stack, Y splits one, the
+bumpers change tab and the right stick scrolls. Every button, look sensitivity, dead zone, vertical invert and
+vibration are in **Settings → Controls → Controller**; the Help screen shows the current layout while a pad is in use.
+
 ## Controls (rebindable in Settings → Controls)
 
 | Key | Action | Key | Action |
@@ -113,6 +133,16 @@ Browser caveat: **Ctrl+W closes the tab** and a page cannot stop it; the game sa
   humpback whale, shore crabs, seabirds, boars.
 - **Sky effects** — drifting cloud shadows on sea and land that follow the wind, gulls that circle islands and follow
   the raft (shaped body, swept grey wings with black tips, flapping and gliding), and a foam wake behind the raft or boat.
+- **Item models** — every item has a 3D model, used both for its picture and when it lies in the world (dropped items
+  show their own model at a real size). Food, kits and parts use photo-scanned Poly Haven models: bananas, sweet
+  potato, food tins, a carved wooden bowl (holding each dish: stews with meat and potato, chowder, curries, soups with
+  herbs) and spoon, clay pot, wicker basket, medical box and tape, toolbox and tool chest, magnifying glass, circuit
+  board, LED bulb, rubber boots, fisherman's hat, old tyre, cement and compost bags, jerrycan, flashlight, binoculars and
+  metal detector; the hatchet, machete, mallet, hammer and spade are scans in the hand too. The rest are modelled with
+  the game's scanned textures: rope, cable and vine coils, thread spools, rolled cloth, powder heaps, tied bundles,
+  glass jars and bottles showing their contents, tins, seed packets, hard cases, garments, hats, boots, bags, masks,
+  fins, hides, palm fronds, cuts of meat and fish, skewers. Scanned item models load only while the pictures are made
+  at start-up and are then freed; an item dropped in the world fetches its own again.
 - **Items and crafting** — 335 items and 254 recipes: refined materials and machine parts, a full galley of island
   cooking, field medicine, copper/steel/titanium tools, clothing with real effects (armour, shade, rain, wind chill,
   swim speed, breath, pack slots) and trade goods. Every item can be obtained (recipe, station, harvest, animal or loot).
@@ -133,7 +163,8 @@ src/ocean/ocean.js         FFT ocean, water shading, marine snow
 src/world/                 sky (HDRI blending), world generation, ground cover, sites, game data (data.js, data_more.js, data_extra.js)
 src/gameplay/              player, raft/structures, building, debris and hook, fishing, boats, creatures, wildlife, story, quests
 src/net/net.js             two-player online co-op (PeerJS / WebRTC)
-src/ui/                    HUD and panels; icons.js renders every item/build piece to an icon at load
+src/ui/                    HUD and panels; icons.js renders every item/build piece to an icon at load; items3d.js holds the item models
+src/core/gamepad.js        controllers: play, menu navigation and button bindings
 public/assets/             downloaded textures, HDRIs, glTF models, manifest.json
 scripts/fetch-assets.mjs   downloads and verifies the Poly Haven assets
 scripts/verify-assets.mjs  re-checks them
